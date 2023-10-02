@@ -1,9 +1,13 @@
 import psycopg2
 import logging
+
+# Configure logging for the database setup
+logging.basicConfig(filename='postgre_setup.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 # Connection parameters
 db_params = {
-    "host": "localhost",     
-    "port": 5432,         
+    "host": "localhost",
+    "port": 5432,
     "database": "postgres",
     "user": "postgres",
     "password": "mdp",
@@ -16,15 +20,21 @@ try:
     # Create a cursor object
     cursor = conn.cursor()
 
-    # Create the "customer" table
-    create_table_sql = """
-        CREATE TABLE IF NOT EXISTS customer (
-            firstname VARCHAR(255),
-            lastname VARCHAR(255),
-            age INT
-        )
-    """
-    cursor.execute(create_table_sql)
+    # Check if the "customer" table exists
+    cursor.execute("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'customer')")
+    table_exists = cursor.fetchone()[0]
+
+    if not table_exists:
+        # Create the "customer" table if it doesn't exist
+        create_table_sql = """
+            CREATE TABLE customer (
+                firstname VARCHAR(255),
+                lastname VARCHAR(255),
+                age INT
+            )
+        """
+        cursor.execute(create_table_sql)
+        logging.info("Created the 'customer' table")
 
     # Insert a customer record
     insert_customer_sql = """
@@ -32,6 +42,7 @@ try:
         VALUES ('Pedro', 'Salsa', 24)
     """
     cursor.execute(insert_customer_sql)
+    logging.info("Inserted a customer record")
 
     # Commit the changes to the database
     conn.commit()
