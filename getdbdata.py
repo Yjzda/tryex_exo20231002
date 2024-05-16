@@ -13,7 +13,6 @@ def create_table_if_not_exists():
     conn = psycopg2.connect(**db_params)
     print(conn)
 
-    # Create a cursor object
     cursor = conn.cursor()
     print(cursor)
 
@@ -21,10 +20,8 @@ def create_table_if_not_exists():
     
     table_name = 'rfjeudi_datadb'
     
-    # Créez un curseur pour exécuter une requête SQL
     cur = conn.cursor()
 
-    # Check if the table exists, if not, create it
     cur.execute(f'''
         CREATE TABLE IF NOT EXISTS {table_name} (
             name TEXT,
@@ -49,15 +46,10 @@ def insert_sample_data():
     conn = psycopg2.connect(**db_params)
     print(conn)
 
-    # Create a cursor object
     cursor = conn.cursor()
     print(cursor)
-
-    
     
     table_name = 'rfjeudi_datadb'
-    
-  
     cur = conn.cursor()
     
    
@@ -85,21 +77,14 @@ def get_db_data():
     conn = psycopg2.connect(**db_params)
     print(conn)
 
-    # Create a cursor object
     cursor = conn.cursor()
     table_name = 'rfjeudi_datadb'
-     
-    # Exécutez une requête SQL pour récupérer les données de la table
+
     cursor.execute(f'SELECT * FROM {table_name}')
     
-    # Récupérez toutes les lignes de résultat
     rows = cursor.fetchall()
-    
-    # Fermez le curseur et la connexion à la base de données
     cursor.close()
     conn.close()
-    
-    # Convertissez les données en une liste de dictionnaires
     data = []
     for row in rows:
         data.append({
